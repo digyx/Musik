@@ -2,6 +2,8 @@ name: Build Binaries
 
 on:
   push:
+    branches:
+      - actions
     tags:
       - 'v[0-9]+.*'
 
@@ -41,7 +43,9 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Install Dependencies
-        run: python3 -m pip install -r requirements.txt
+        run: |
+          pip install --upgrade setuptools
+          pip install -r requirements.txt
 
       - name: Build binaries
         run: |
