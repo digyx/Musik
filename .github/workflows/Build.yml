@@ -47,7 +47,7 @@ jobs:
           pyinstaller -F client.py
 
       - name: Upload Client Binary (Windows)
-        uses: actions/upload-release-assets@v1
+        uses: actions/upload-release-asset@v1
         if: matrix.config.os == 'windows-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +58,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Client Binary
-        uses: actions/upload-release-assets@v1
+        uses: actions/upload-release-asset@v1
         if: matrix.config.os != 'windows-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -70,7 +70,7 @@ jobs:
 
       - name: Upload Server Binary (Windows)
         if: matrix.config.os == 'windows-latest'
-        uses: actions/upload-release-assets@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -81,7 +81,7 @@ jobs:
       
       - name: Upload Server Binary
         if: matrix.config.os != 'windows-latest'
-        uses: actions/upload-release-assets@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
