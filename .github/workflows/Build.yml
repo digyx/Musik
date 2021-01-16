@@ -2,8 +2,6 @@ name: Build Binaries
 
 on:
   push:
-    branches:
-      - actions
     tags:
       - 'v[0-9]+.*'
 
@@ -23,8 +21,8 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: true
+          draft: false
+          prerelease: false
 
   build:
     name: Build Binaries
