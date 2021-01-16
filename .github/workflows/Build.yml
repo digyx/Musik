@@ -2,10 +2,8 @@ name: Build Binaries
 
 on:
   push:
-    branches:
-      - master
-  
-  workflow_dispatch:
+    tags:
+      - 'v[0-9]+.*'
 
 jobs:
   create_release:
