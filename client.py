@@ -6,7 +6,7 @@ import platform, subprocess
 
 
 auth_manager = SpotifyPKCE(client_id="a9ed7f99384943dc98518ed396cd639a",
-                            redirect_uri="http://localhost/callback",
+                            redirect_uri="http://localhost:7999/callback",
                             scope="streaming")
 
 sp = Spotify(auth_manager=auth_manager)
@@ -38,8 +38,10 @@ def print_track(track):
 
 
 async def client():
-    uri = "ws://vorona.gg:7999/musik"
+    uri = "ws://api.vorona.gg:7999"
     now_playing = ""
+
+    print("Connecting to server...")
 
     while True:
         async with websockets.connect(uri) as ws:

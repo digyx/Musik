@@ -55,9 +55,7 @@ jobs:
           sudo python3 -m pip install pyinstaller
 
       - name: Build binaries
-        run: |
-          pyinstaller -F client.py
-          pyinstaller -F server.py
+        run: pyinstaller -F client.py
 
       - name: Upload Client Binary (Windows)
         uses: actions/upload-release-asset@v1
@@ -79,26 +77,4 @@ jobs:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: musik-client-${{ matrix.config.os }}
           asset_path: ./dist/client
-          asset_content_type: application/octet-stream
-
-      - name: Upload Server Binary (Windows)
-        if: matrix.config.os == 'windows-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: musik-server-${{ matrix.config.os }}.exe
-          asset_path: ./dist/server.exe
-          asset_content_type: application/octet-stream
-      
-      - name: Upload Server Binary
-        if: matrix.config.os != 'windows-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: musik-server-${{ matrix.config.os }}
-          asset_path: ./dist/server
           asset_content_type: application/octet-stream

@@ -8,7 +8,7 @@ import time, subprocess
 from threading import Thread, Event
 
 auth_manager = SpotifyPKCE(client_id="a9ed7f99384943dc98518ed396cd639a",
-                            redirect_uri="http://localhost:8000/callback",
+                            redirect_uri="http://localhost:7999/callback",
                             scope="playlist-read-private",
                             open_browser=False)
 
@@ -26,7 +26,7 @@ async def handler(ws, path):
 
 def start_server():    
     asyncio.set_event_loop(asyncio.new_event_loop())
-    server = websockets.serve(handler, "0.0.0.0", 8080)
+    server = websockets.serve(handler, "0.0.0.0", 7999)
 
     asyncio.get_event_loop().run_until_complete(server)
     asyncio.get_event_loop().run_forever()
