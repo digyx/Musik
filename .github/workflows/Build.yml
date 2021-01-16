@@ -1,0 +1,83 @@
+name: Build Binaries
+
+on:
+  push:
+    branches:
+      - master
+  
+  workflow_dispatch:
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: true
+
+  build:
+    name: Build Binaries
+    needs: create_release
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      matrix:
+        config:
+          - os: ubuntu-latest
+          - os: macos-latest
+          - os: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
+      - name: Install Dependencies
+        run: |
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install pyinstaller
+          pyinstaller -F client.py
+
+      - name: Upload Client Binary
+        uses: actions/upload-release-assets@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+
+          if: matrix.config.os == 'windows-latest'
+            asset_name: musik-client-${{ matrix.config.os }}.exe
+            asset_path: ./dist/client.exe
+          
+          if: matrix.config.os != 'windows-latest'
+            asset_name: musik-client-${{ matrix.config.os }}
+            asset_path: ./dist/client
+          
+          asset_content_type: application/octet-stream
+
+      - name: Upload Server Binary
+        uses: actions/upload-release-assets@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+
+          if: matrix.config.os == 'windows-latest'
+            asset_name: musik-server-${{ matrix.config.os }}.exe
+            asset_path: ./dist/server.exe
+          
+          if: matrix.config.os != 'windows-latest'
+            asset_name: musik-server-${{ matrix.config.os }}
+            asset_path: ./dist/server
+          
+          asset_content_type: application/octet-stream
