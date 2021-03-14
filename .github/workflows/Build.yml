@@ -4,14 +4,6 @@ on:
   push:
 
 jobs:
-  remove_release:
-    name: Remove Previous Release
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Remove Release
-        uses: 
-
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
