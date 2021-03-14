@@ -4,6 +4,19 @@ on:
   push:
 
 jobs:
+  remove_release:
+    name: Remove Previous Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Remove Release
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          delete_release: true
+          tag_name: nightly
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
