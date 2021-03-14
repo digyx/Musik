@@ -1,9 +1,17 @@
-name: Create and Build Release
+name: Create Binaries for Latest Version
 
 on:
   push:
 
 jobs:
+  remove_release:
+    name: Remove Previous Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Remove Release
+        uses: 
+
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
@@ -17,7 +25,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: nightly
           release_name: Latest Commit
           draft: false
           prerelease: true
