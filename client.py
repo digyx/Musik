@@ -1,20 +1,21 @@
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyPKCE
 
-import asyncio, websockets, time
+import asyncio, websockets, time, ast
 import platform, subprocess
 
 
 auth_manager = SpotifyPKCE(client_id="a9ed7f99384943dc98518ed396cd639a",
-                            redirect_uri="http://localhost:7999/callback",
-                            scope="streaming")
+                            redirect_uri="http://localhost:7998/callback",
+                            scope="streaming user-read-playback-state user-modify-playback-state")
 
 sp = Spotify(auth_manager=auth_manager)
+device_id = sp.current_playback()['device']['id']
 
-
-def play(uri: str):
-    sp.start_playback(uris=[uri])
-    sp.repeat("track")
+def play(uris: str):
+    sp.start_playback(uris=uris, device_id=device_id)
+    sp.repeat("context")
+    sp.shuffle(False)
 
 
 def pause():
@@ -46,18 +47,21 @@ async def client():
     while True:
         async with websockets.connect(uri) as ws:
             try:
-                track_uri = await ws.recv()
+                track_uris = await ws.recv()
+                print("\rConnected and playing.", end="")
             except:
-                print("There was an error.  Shame.")
+                print("\rError....", end="")
     
-            if track_uri == now_playing:
+            if track_uris == now_playing:
                 time.sleep(1)
                 continue
+            elif track_uris == "['pause']":
+                pause()
+                now_playing = track_uris
+                print("\rPaused.", end="")
             else:
-                play(track_uri)
-                now_playing = track_uri
-
-                print_track(sp.track(track_uri))
+                play(ast.literal_eval(track_uris))
+                now_playing = track_uris
 
 
 asyncio.get_event_loop().run_until_complete(client())

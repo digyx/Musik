@@ -4,24 +4,24 @@ import websockets
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyPKCE
 
-import time, subprocess
+from params import Params
+
+import time
 from threading import Thread, Event
 
 auth_manager = SpotifyPKCE(client_id="a9ed7f99384943dc98518ed396cd639a",
-                            redirect_uri="http://localhost:7999/callback",
+                            redirect_uri="http://localhost:7998/callback",
                             scope="playlist-read-private",
                             open_browser=False)
 
 sp = Spotify(auth_manager=auth_manager)
-track_uri = "spotify:track:4gCnaT6NKQmR3hqEeHp30t"
-playlist = sp.playlist_items("6W3d5DZZ09QfEsPP8khAWw")
 
 event = Event()
 
 
 async def handler(ws, path):
     event.wait()
-    await ws.send(track_uri)
+    await ws.send(params.get_queue())
 
 
 def start_server():    
@@ -32,30 +32,30 @@ def start_server():
     asyncio.get_event_loop().run_forever()
 
 
-def get_tracks():
-    global playlist
+def init():
+    # Determine which playlist to use
+    playlists = sp.current_user_playlists()
 
-    i = 1
-    for i, track in enumerate(playlist["items"], start=1):
-        track = track["track"]
-        print("{} : {}, {}".format(i, track["name"], track["album"]["name"]))
+    for index, entry in enumerate(playlists['items'], start=1):
+        print("{} : {}".format(index, entry['name']))
 
+    index = int(input("Which playlist? ")) - 1
+    playlist_uri = playlists['items'][index]['uri']
+
+    return Params(playlist_uri, sp)
 
 def track_manager():
+    global params
+    params = init()
+
     while True:
-        subprocess.run("clear", shell=True)
-        get_tracks()
-
-        global playlist
-        global track_uri
-
-        track_selection = int(input("Selection: "))
-        track_uri = playlist["items"][track_selection - 1]["track"]["uri"]
+        params.set_queue()
 
         # Sync song changes
-        event.clear()
-        time.sleep(2)
-        event.set()
+        if params.change():
+            event.clear()
+            time.sleep(2)
+            event.set()
 
 
 server = Thread(target=start_server, args=())
