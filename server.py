@@ -10,7 +10,7 @@ import time
 from threading import Thread, Event
 
 auth_manager = SpotifyPKCE(client_id="a9ed7f99384943dc98518ed396cd639a",
-                            redirect_uri="http://localhost:7998/callback",
+                            redirect_uri="http://localhost:7999/callback",
                             scope="playlist-read-private",
                             open_browser=False)
 
