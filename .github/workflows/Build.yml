@@ -20,6 +20,7 @@ jobs:
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
+    needs: remove_release
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
 
