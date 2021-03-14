@@ -2,6 +2,8 @@ name: Create and Build Release
 
 on:
   push:
+    tags:
+      - 'v[0-9]+.*'
 
 jobs:
   create_release:
@@ -18,9 +20,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Latest Commit
+          release_name: Release ${{ github.ref }}
           draft: false
-          prerelease: true
+          prerelease: false
 
   build:
     name: Build Binaries

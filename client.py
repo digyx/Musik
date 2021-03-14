@@ -14,8 +14,8 @@ device_id = sp.current_playback()['device']['id']
 
 def play(uris: str):
     sp.start_playback(uris=uris, device_id=device_id)
-    sp.repeat("context")
-    sp.shuffle(False)
+    sp.repeat("context", device_id=device_id)
+    sp.shuffle(False, device_id=device_id)
 
 
 def pause():
